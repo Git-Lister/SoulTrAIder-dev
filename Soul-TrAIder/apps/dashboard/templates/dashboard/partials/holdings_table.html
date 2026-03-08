@@ -1,0 +1,26 @@
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Portfolio</th>
+            <th>Ticker</th>
+            <th>Shares</th>
+            <th>Entry Price</th>
+            <th>Current Price</th>
+            <th>Value</th>
+            <th>Return</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for tx in transactions %}
+        <tr>
+            <td>{{ tx.portfolio.name }}</td>
+            <td>{{ tx.instrument.ticker }}</td>
+            <td>{{ tx.shares }}</td>
+            <td>{{ tx.price_per_share }}</td>
+            <td hx-get="{% url 'partial-price-update' tx.instrument.id %}" hx-trigger="load, every 60s" hx-swap="innerHTML">Loading...</td>
+            <td id="value-{{ tx.instrument.id }}"></td>
+            <td id="return-{{ tx.instrument.id }}"></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
