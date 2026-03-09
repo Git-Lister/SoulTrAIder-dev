@@ -1,0 +1,45 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyc
+*.pyd
+*.pyo
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+venv/
+.env
+.venv
+.python-version
+
+# Django
+*.log
+local_settings.py
+db.sqlite3
+media/
+staticfiles/
+*.pot
+*.po
+*.mo
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Celery
+celerybeat-schedule
+celerybeat.pid
+
+# Environment
+.env
+.env.local
+.env.prod
