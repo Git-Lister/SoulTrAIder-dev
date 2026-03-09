@@ -13,3 +13,4 @@ beautifulsoup4==4.12.2
 ollama==0.1.7
 django-htmx==1.17.0
 django-bootstrap5==23.3
+

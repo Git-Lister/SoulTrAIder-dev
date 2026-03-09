@@ -1,6 +1,41 @@
-{% extends "base.html" %}
-{% block title %}Holdings{% endblock %}
-{% block content %}
-<h1>Detailed Holdings</h1>
-{% include "dashboard/partials/holdings_table.html" %}
-{% endblock %}
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Portfolio</th>
+            <th>Ticker</th>
+            <th>Shares</th>
+            <th>Entry Price</th>
+            <th>Current Price</th>
+            <th>Value</th>
+            <th>Return</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for tx in transactions %}
+        <tr>
+            <td>{{ tx.portfolio.name }}</td>
+            <td>{{ tx.instrument.ticker }}</td>
+            <td>{{ tx.shares }}</td>
+            <td>{{ tx.price_per_share }}</td>
+            <td>
+                <span hx-get="{% url 'partial-price-update' tx.instrument.id %}" 
+                      hx-trigger="load, every 60s" 
+                      hx-swap="innerHTML">
+                    Loading...
+                </span>
+            </td>
+            <td id="value-{{ tx.instrument.id }}"></td>
+            <td id="return-{{ tx.instrument.id }}"></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<script>
+    // This will be enhanced later to calculate value/return based on price
+    document.body.addEventListener('htmx:afterSwap', function(evt) {
+        if (evt.detail.target.id && evt.detail.target.id.startsWith('price-')) {
+            // Recalculate values for that row
+        }
+    });
+</script>
