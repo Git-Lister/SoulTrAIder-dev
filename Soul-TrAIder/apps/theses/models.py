@@ -137,3 +137,28 @@ class HypotheticalTrade(models.Model):
 
     def __str__(self):
         return f"{self.instrument} - {self.entry_date} - {self.status}"
+
+
+class Scenario(models.Model):
+    name = models.CharField(max_length=100)
+    description = models.TextField()
+    probability = models.FloatField(default=0.0, help_text="Estimated probability (0-1)")
+    escalation_level = models.ForeignKey('geopolitics.EscalationLevel', on_delete=models.SET_NULL, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.name} ({self.probability:.0%})"
+
+
+class ScenarioImpact(models.Model):
+    scenario = models.ForeignKey(Scenario, on_delete=models.CASCADE)
+    instrument = models.ForeignKey('core.Instrument', on_delete=models.CASCADE)
+    expected_direction = models.CharField(max_length=10, choices=[('up', 'Up'), ('down', 'Down'), ('neutral', 'Neutral')])
+    impact_magnitude = models.FloatField(help_text="Expected percentage move (e.g., 15 for +15%)")
+
+    class Meta:
+        unique_together = ('scenario', 'instrument')
+
+    def __str__(self):
+        return f"{self.scenario.name} → {self.instrument.ticker}: {self.expected_direction} {self.impact_magnitude}%"

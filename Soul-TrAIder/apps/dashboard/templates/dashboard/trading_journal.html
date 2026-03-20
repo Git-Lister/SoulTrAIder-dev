@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Trading Journal{% endblock %}
+{% block content %}
+<h1>Trading Journal</h1>
+
+<h2>Performance Summary</h2>
+<p>Closed trades: {{ total_closed }} | Wins: {{ wins }} | Win Rate: {{ win_rate|floatformat:1 }}%</p>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Portfolio</th>
+            <th>Instrument</th>
+            <th>Buy Date</th>
+            <th>Entry Price</th>
+            <th>Shares</th>
+            <th>Thesis</th>
+            <th>Exit Date</th>
+            <th>Exit Price</th>
+            <th>Exit Reason</th>
+            <th>Notes</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for tx in transactions %}
+        <tr>
+            <td>{{ tx.portfolio.name }}</td>
+            <td>{{ tx.instrument.ticker }}</td>
+            <td>{{ tx.buy_date }}</td>
+            <td>{{ tx.price_per_share }}</td>
+            <td>{{ tx.shares }}</td>
+            <td>{{ tx.thesis.name|default:"-" }}</td>
+            <td>{{ tx.exit_date|default:"-" }}</td>
+            <td>{{ tx.exit_price|default:"-" }}</td>
+            <td>{{ tx.get_exit_reason_display|default:"-" }}</td>
+            <td>{{ tx.notes|truncatechars:50 }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="10">No transactions yet.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

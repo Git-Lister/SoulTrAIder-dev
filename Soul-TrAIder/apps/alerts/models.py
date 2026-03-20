@@ -1,6 +1,8 @@
 from django.db import models
+
 from apps.core.models import Instrument
 from apps.theses.models import Prediction
+
 
 class Alert(models.Model):
     ALERT_TYPES = [
@@ -18,3 +20,16 @@ class Alert(models.Model):
 
     def __str__(self):
         return f"{self.instrument} - {self.alert_type}"
+
+
+class RebalanceSuggestion(models.Model):
+    portfolio = models.ForeignKey('core.Portfolio', on_delete=models.CASCADE)
+    instrument = models.ForeignKey('core.Instrument', on_delete=models.CASCADE)
+    current_allocation = models.FloatField()
+    target_allocation = models.FloatField()
+    suggested_action = models.CharField(max_length=10, choices=[('buy', 'Buy'), ('sell', 'Sell')])
+    suggested_quantity = models.DecimalField(max_digits=12, decimal_places=6)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.portfolio.name} - {self.instrument.ticker}: {self.suggested_action} {self.suggested_quantity}"

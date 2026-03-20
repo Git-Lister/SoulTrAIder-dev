@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -26,6 +27,7 @@ INSTALLED_APPS = [
     'apps.marketdata',
     'apps.news',
     'apps.alerts',
+    'apps.geopolitics',
     'apps.dashboard',
 ]
 
@@ -103,10 +105,52 @@ CELERY_TIMEZONE = TIME_ZONE
 
 # Celery Beat Schedule (for periodic tasks)
 from celery.schedules import crontab
+
 CELERY_BEAT_SCHEDULE = {
     'update-daily-prices': {
         'task': 'apps.marketdata.tasks.update_daily_prices',
         'schedule': crontab(hour=21, minute=0),  # 9pm GMT (market close)
     },
 }
+
+# Add LLM prediction generation to beat schedule
+CELERY_BEAT_SCHEDULE.setdefault('generate-llm-predictions', {
+    'task': 'apps.news.tasks.generate_llm_predictions',
+    'schedule': crontab(hour=8, minute=0),  # daily at 8am
+})
+
+# Add evaluate predictions task to beat schedule
+CELERY_BEAT_SCHEDULE.setdefault('evaluate-predictions', {
+    'task': 'apps.theses.tasks.evaluate_predictions',
+    'schedule': crontab(hour=22, minute=0),  # after market close
+})
+
+# Add weekly accuracy stats update to beat schedule
+CELERY_BEAT_SCHEDULE.setdefault('update-accuracy-stats', {
+    'task': 'apps.theses.utils.update_accuracy_stats',
+    'schedule': crontab(day_of_week=0, hour=23, minute=0),  # Sunday 11pm
+})
+
+# Add daily risk allocation check to beat schedule
+CELERY_BEAT_SCHEDULE.setdefault('check-risk-allocation', {
+    'task': 'apps.alerts.tasks.check_risk_allocation',
+    'schedule': crontab(hour=17, minute=0),  # daily after market close
+})
+
+# Add marketdata indicator and correlation update tasks
+CELERY_BEAT_SCHEDULE.setdefault('update-technical-indicators', {
+    'task': 'apps.marketdata.tasks.update_technical_indicators',
+    'schedule': crontab(hour=20, minute=0),  # daily at 8pm
+})
+
+CELERY_BEAT_SCHEDULE.setdefault('update-correlation-matrix', {
+    'task': 'apps.marketdata.tasks.update_correlation_matrix',
+    'schedule': crontab(day_of_week=0, hour=21, minute=0),  # weekly on Sunday 9pm
+})
+
+# Add rebalance suggestion generation weekly
+CELERY_BEAT_SCHEDULE.setdefault('generate-rebalance-suggestions', {
+    'task': 'apps.alerts.tasks.generate_rebalance_suggestions',
+    'schedule': crontab(day_of_week=0, hour=20, minute=0),  # weekly on Sunday 8pm
+})
 

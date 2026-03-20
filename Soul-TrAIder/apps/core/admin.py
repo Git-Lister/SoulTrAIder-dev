@@ -10,9 +10,11 @@ class InstrumentAdmin(admin.ModelAdmin):
 
 @admin.register(Portfolio)
 class PortfolioAdmin(admin.ModelAdmin):
-    list_display = ('name', 'platform', 'created_at')
+    list_display = ('name', 'platform', 'account_type', 'created_at')
+    list_filter = ('platform', 'account_type', 'created_at')
 
 @admin.register(Transaction)
 class TransactionAdmin(admin.ModelAdmin):
-    list_display = ('portfolio', 'instrument', 'buy_date', 'shares', 'price_per_share')
-    list_filter = ('portfolio', 'instrument', 'buy_date')
+    list_display = ('portfolio', 'instrument', 'buy_date', 'shares', 'price_per_share', 'exit_date', 'exit_reason', 'thesis')
+    list_filter = ('portfolio', 'instrument', 'buy_date', 'exit_reason')
+    search_fields = ('portfolio__name', 'instrument__ticker', 'thesis__name')

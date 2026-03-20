@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}LLM Predictions{% endblock %}
+{% block content %}
+<h1>LLM-Generated Predictions</h1>
+<table class="table table-striped">
+    <thead>
+        <tr><th>Instrument</th><th>Created</th><th>Target Date</th><th>Direction</th><th>Target</th><th>Confidence</th><th>Rationale</th><th>Status</th></tr>
+    </thead>
+    <tbody>
+        {% for pred in predictions %}
+        <tr>
+            <td>{{ pred.instrument.ticker }}</td>
+            <td>{{ pred.created_date }}</td>
+            <td>{{ pred.target_date|default:"-" }}</td>
+            <td>{{ pred.get_direction_display }}</td>
+            <td>{{ pred.target_value }}</td>
+            <td>{{ pred.confidence }}</td>
+            <td>{{ pred.rationale|truncatewords:20 }}</td>
+            <td>{{ pred.get_status_display }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="8">No LLM predictions yet.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
