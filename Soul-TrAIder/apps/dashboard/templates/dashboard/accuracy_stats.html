@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Accuracy Stats{% endblock %}
+{% block content %}
+<h1>Prediction Accuracy</h1>
+<table class="table table-striped">
+    <thead>
+        <tr><th>Instrument</th><th>Source</th><th>Date</th><th>Total</th><th>Hits</th><th>Hit Rate</th><th>Avg Confidence</th><th>Avg Accuracy</th></tr>
+    </thead>
+    <tbody>
+        {% for stat in stats %}
+        <tr>
+            <td>{{ stat.instrument.ticker }}</td>
+            <td>{{ stat.get_source_display }}</td>
+            <td>{{ stat.date }}</td>
+            <td>{{ stat.total_predictions }}</td>
+            <td>{{ stat.hits }}</td>
+            <td>{% widthratio stat.hits stat.total_predictions 100 %}%</td>
+            <td>{{ stat.avg_confidence|floatformat:2 }}</td>
+            <td>{{ stat.avg_accuracy|floatformat:2 }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="8">No accuracy data yet.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

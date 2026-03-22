@@ -2,6 +2,7 @@
     <thead>
         <tr>
             <th>Portfolio</th>
+            <th>Account Type</th>
             <th>Ticker</th>
             <th>Shares</th>
             <th>Entry Price</th>
@@ -14,6 +15,17 @@
         {% for tx in transactions %}
         <tr>
             <td>{{ tx.portfolio.name }}</td>
+            <td>
+                {% if tx.portfolio.account_type == 'isa' %}
+                    <span class="badge bg-success">ISA</span>
+                {% elif tx.portfolio.account_type == 'gia' %}
+                    <span class="badge bg-primary">GIA</span>
+                {% elif tx.portfolio.account_type == 'sipp' %}
+                    <span class="badge bg-secondary">SIPP</span>
+                {% else %}
+                    <span class="badge bg-light">{{ tx.portfolio.get_account_type_display }}</span>
+                {% endif %}
+            </td>
             <td>{{ tx.instrument.ticker }}</td>
             <td>{{ tx.shares }}</td>
             <td>{{ tx.price_per_share }}</td>

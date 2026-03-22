@@ -4,6 +4,7 @@ python-dotenv==1.0.0
 requests==2.31.0
 yfinance==0.2.37
 pandas==2.2.1
+numpy
 celery==5.3.4
 redis==5.0.1
 django-celery-beat==2.5.0

@@ -2,33 +2,15 @@ from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelatio
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
 
+from apps.core.models import Instrument
+from apps.theses.models import Prediction
 
-class Thesis(models.Model):
-    name = models.CharField(max_length=100)
-    description = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
-    active = models.BooleanField(default=True)
 
-    def __str__(self):
-        return self.name
-
-class ThesisInstrument(models.Model):
-    thesis = models.ForeignKey(Thesis, on_delete=models.CASCADE)
-    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, limit_choices_to={'model__in': ['instrument']})
-    object_id = models.PositiveIntegerField()
-    instrument = GenericForeignKey('content_type', 'object_id')
-    weight = models.FloatField(default=1.0)
-
-class Prediction(models.Model):
-    PREDICTION_TYPES = [
-        ('price_target', 'Price Target'),
-        ('direction', 'Direction Only'),
-        ('event', 'Event'),
-    ]
-    DIRECTION = [
-        ('up', 'Up'),
-        ('down', 'Down'),
-        ('neutral', 'Neutral'),
+class Alert(models.Model):
+    ALERT_TYPES = [
+        ('target', 'Target'),
+        ('stop_loss', 'Stop Loss'),
+        ('news', 'News'),
     ]
     STATUS = [
         ('active', 'Active'),
@@ -85,4 +67,17 @@ class Prediction(models.Model):
         self.save()
 
     def __str__(self):
-        return f"{self.instrument} - {self.created_date} - {self.status}"
+        return f"{self.instrument} - {self.alert_type}"
+
+
+class RebalanceSuggestion(models.Model):
+    portfolio = models.ForeignKey('core.Portfolio', on_delete=models.CASCADE)
+    instrument = models.ForeignKey('core.Instrument', on_delete=models.CASCADE)
+    current_allocation = models.FloatField()
+    target_allocation = models.FloatField()
+    suggested_action = models.CharField(max_length=10, choices=[('buy', 'Buy'), ('sell', 'Sell')])
+    suggested_quantity = models.DecimalField(max_digits=12, decimal_places=6)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.portfolio.name} - {self.instrument.ticker}: {self.suggested_action} {self.suggested_quantity}"
