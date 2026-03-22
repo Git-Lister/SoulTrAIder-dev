@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -66,10 +67,13 @@ DATABASES = {
         'NAME': os.getenv('DB_NAME', 'geoportal'),
         'USER': os.getenv('DB_USER', 'postgres'),
         'PASSWORD': os.getenv('DB_PASSWORD', 'postgres'),
-        'HOST': os.getenv('DB_HOST', 'localhost'),
+        'HOST': os.getenv('DB_HOST', 'localhost'),  # will be 'db' in Docker
         'PORT': os.getenv('DB_PORT', '5432'),
     }
 }
+
+CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL', 'redis://localhost:6379/0')
+CELERY_RESULT_BACKEND = os.getenv('CELERY_RESULT_BACKEND', 'redis://localhost:6379/0')
 
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
@@ -103,6 +107,7 @@ CELERY_TIMEZONE = TIME_ZONE
 
 # Celery Beat Schedule (for periodic tasks)
 from celery.schedules import crontab
+
 CELERY_BEAT_SCHEDULE = {
     'update-daily-prices': {
         'task': 'apps.marketdata.tasks.update_daily_prices',
